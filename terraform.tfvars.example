@@ -4,6 +4,7 @@ aws_access_key = ""
 aws_secret_key = ""
 ssh_public_key = ""
 
+domain         = "vip.mwlabs.net"
 bastion_cidr   = "198.51.100.100/32"
 
 f5xc_api_p12_file = "path to tenant.ves.volterra.io.api-creds.p12 file"

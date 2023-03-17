@@ -1,0 +1,13 @@
+project_prefix = "prefix"
+owner_tag      = "user@domain" # used to find instances in aws for output. Must match the F5 XC tenant user account
+aws_access_key = ""
+aws_secret_key = ""
+ssh_public_key = ""
+
+bastion_cidr   = "198.51.100.100/32"
+
+f5xc_api_p12_file = "path to tenant.ves.volterra.io.api-creds.p12 file"
+f5xc_api_url      = "https://tenant.console.ves.volterra.io/api"
+f5xc_tenant       = "tenant-........"
+f5xc_api_token    = ""
+f5xc_aws_cred     = "aws_cred"

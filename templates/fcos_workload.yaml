@@ -1,0 +1,24 @@
+variant: fcos
+version: 1.4.0
+passwd:
+  users:
+  - name: core
+    ssh_authorized_keys:
+    - ${ssh_public_key}
+systemd:
+  units:
+  - name: frontend.service
+    enabled: true
+    contents: |
+      [Unit]
+      Description=nginx frontend
+      After=network-online.target
+      Wants=network-online.target
+      [Service]
+      Restart=on-failure
+      RestartSec=5s
+      ExecStartPre=-/bin/podman kill frontend
+      ExecStartPre=-/bin/podman rm frontend
+      ExecStart=/bin/podman run --name frontend -p 80:80 -e F5DEMO_APP=text docker.io/f5devcentral/f5-demo-httpd:nginx
+      [Install]
+      WantedBy=multi-user.target

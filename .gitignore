@@ -1,0 +1,12 @@
+.env*
+*tfstate*
+*tfvars
+*tfvars.json
+*.p12
+*.crt
+.terraform*
+az-login.sh
+kubeconfig*.yaml
+ves*.yaml
+error.txt
+infra/subnets_*.json

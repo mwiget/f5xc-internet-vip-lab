@@ -64,3 +64,7 @@ variable "bastion_cidr" {
   type        = string
 }
 
+variable "domain" {
+  type        = string
+}
+

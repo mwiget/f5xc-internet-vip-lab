@@ -45,7 +45,7 @@ resource "volterra_http_loadbalancer" "site1" {
   name          = format("%s-ce1", var.project_prefix)
   namespace     = module.namespace.namespace["name"]
   no_challenge  = true
-  domains       = ["vip.mwlabs.net"]
+  domains       = [var.domain]
 
   disable_rate_limit              = true
   service_policies_from_namespace = true

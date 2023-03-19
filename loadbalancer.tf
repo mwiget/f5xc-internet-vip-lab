@@ -1,7 +1,7 @@
 resource "volterra_healthcheck" "hc" {
-  depends_on  = [module.namespace.namespace]
-  name      = format("%s-workload-hc", var.project_prefix)
-  namespace = module.namespace.namespace["name"]
+  depends_on = [module.namespace.namespace]
+  name       = format("%s-workload-hc", var.project_prefix)
+  namespace  = module.namespace.namespace["name"]
 
   http_health_check {
     use_origin_server_name = true
@@ -40,12 +40,12 @@ resource "volterra_origin_pool" "workload" {
   }
 }
 
-resource "volterra_http_loadbalancer" "site1" {
-  depends_on    = [volterra_origin_pool.workload]
-  name          = format("%s-ce1", var.project_prefix)
-  namespace     = module.namespace.namespace["name"]
-  no_challenge  = true
-  domains       = [var.domain]
+resource "volterra_http_loadbalancer" "lb1" {
+  depends_on   = [volterra_origin_pool.workload]
+  name         = format("%s-ce1-lb1", var.project_prefix)
+  namespace    = module.namespace.namespace["name"]
+  no_challenge = true
+  domains      = [var.domain]
 
   disable_rate_limit              = true
   service_policies_from_namespace = true
@@ -80,12 +80,54 @@ resource "volterra_http_loadbalancer" "site1" {
 
 }
 
+resource "volterra_http_loadbalancer" "lb2" {
+  depends_on   = [volterra_origin_pool.workload]
+  name         = format("%s-ce1-lb2", var.project_prefix)
+  namespace    = module.namespace.namespace["name"]
+  no_challenge = true
+  domains      = [var.domain]
+
+  disable_rate_limit              = true
+  service_policies_from_namespace = true
+  disable_waf                     = true
+  source_ip_stickiness            = true
+
+  advertise_custom {
+    advertise_where {
+      port = 8080
+      site {
+        network = "SITE_NETWORK_OUTSIDE_WITH_INTERNET_VIP"
+        site {
+          name      = format("%s-ce1", var.project_prefix)
+          namespace = "system"
+        }
+      }
+    }
+  }
+
+  default_route_pools {
+    pool {
+      name = volterra_origin_pool.workload.name
+    }
+    weight   = 1
+    priority = 1
+  }
+
+  http {
+    dns_volterra_managed = false
+    port                 = 8080
+  }
+
+}
 
 output "origin_pool" {
   value = resource.volterra_origin_pool.workload
 }
 output "http_loadbalancer1" {
-  value = resource.volterra_http_loadbalancer.site1
+  value = resource.volterra_http_loadbalancer.lb1
+}
+output "http_loadbalancer2" {
+  value = resource.volterra_http_loadbalancer.lb2
 }
 output "health_check" {
   value = resource.volterra_healthcheck.hc
